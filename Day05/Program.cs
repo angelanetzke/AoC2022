@@ -3,8 +3,7 @@ using System.Text.RegularExpressions;
 
 var allLines = File.ReadAllLines("input.txt");
 var separationLine = 0;
-var separationRegex = new Regex(@"^[\s\d]+$");
-while (!separationRegex.IsMatch(allLines[separationLine]))
+while (allLines[separationLine].Length > 0)
 {
 	separationLine++;
 }
@@ -15,7 +14,7 @@ static void Part1(string[] allLines, int separationLine)
 {	
 	var stacks = GetInitialStacks(separationLine, allLines);
 	var instructionRegex = new Regex(@"move (?<count>\d+) from (?<start>\d+) to (?<end>\d+)");
-	for (int lineIndex = separationLine + 2; lineIndex < allLines.Count(); lineIndex++)
+	for (int lineIndex = separationLine + 1; lineIndex < allLines.Count(); lineIndex++)
 	{
 		var match = instructionRegex.Match(allLines[lineIndex]);
 		var count = int.Parse(match.Groups["count"].Value);
@@ -39,7 +38,7 @@ static void Part2(string[] allLines, int separationLine)
 	var moveList = new LinkedList<char>();
 	var stacks = GetInitialStacks(separationLine, allLines);
 	var instructionRegex = new Regex(@"move (?<count>\d+) from (?<start>\d+) to (?<end>\d+)");
-	for (int lineIndex = separationLine + 2; lineIndex < allLines.Count(); lineIndex++)
+	for (int lineIndex = separationLine + 1; lineIndex < allLines.Count(); lineIndex++)
 	{
 		var match = instructionRegex.Match(allLines[lineIndex]);
 		var count = int.Parse(match.Groups["count"].Value);
@@ -68,12 +67,12 @@ static void Part2(string[] allLines, int separationLine)
 
 static Stack<char>[] GetInitialStacks(int separationLine, string[] allLines)
 {
-	var stacks = new Stack<char>[(allLines[separationLine].Length + 1) / 4];
+	var stacks = new Stack<char>[(allLines[0].Length + 1) / 4];
 	for (int i = 0; i < stacks.Count(); i++)
 	{
 		stacks[i] = new Stack<char>();
 	}
-	for (int lineIndex = separationLine - 1; lineIndex >= 0; lineIndex--)
+	for (int lineIndex = separationLine - 2; lineIndex >= 0; lineIndex--)
 	{
 		for (int stackIndex = 0; stackIndex < stacks.Count(); stackIndex++)
 		{
