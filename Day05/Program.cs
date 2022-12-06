@@ -25,12 +25,7 @@ static void Part1(string[] allLines, int separationLine)
 			stacks[end - 1].Push(stacks[start - 1].Pop());
 		}
 	}
-	var builder = new StringBuilder();
-	foreach (Stack<char> thisStack in stacks)
-	{
-		builder.Append(thisStack.Peek());
-	}
-	Console.WriteLine($"Part 1: {builder.ToString()}");
+	Console.WriteLine($"Part 1: {StacksToString(stacks)}");
 }
 
 static void Part2(string[] allLines, int separationLine)
@@ -57,12 +52,7 @@ static void Part2(string[] allLines, int separationLine)
 			}
 		}		
 	}
-	var builder = new StringBuilder();
-	foreach (Stack<char> thisStack in stacks)
-	{
-		builder.Append(thisStack.Peek());
-	}
-	Console.WriteLine($"Part 2: {builder.ToString()}");
+	Console.WriteLine($"Part 2: {StacksToString(stacks)}");
 }
 
 static Stack<char>[] GetInitialStacks(int separationLine, string[] allLines)
@@ -84,4 +74,17 @@ static Stack<char>[] GetInitialStacks(int separationLine, string[] allLines)
 		}
 	}
 	return stacks;
+}
+
+static string StacksToString(Stack<char>[] stacks)
+{
+	var builder = new StringBuilder();
+	foreach (Stack<char> thisStack in stacks)
+	{
+		if (thisStack.Count > 0)
+		{
+			builder.Append(thisStack.Peek());
+		}
+	}
+	return builder.ToString();
 }
