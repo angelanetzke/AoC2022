@@ -63,7 +63,7 @@ static void Part2(string[] allLines, int separationLine)
 	{
 		builder.Append(thisStack.Peek());
 	}
-	Console.WriteLine($"Part 1: {builder.ToString()}");
+	Console.WriteLine($"Part 2: {builder.ToString()}");
 }
 
 static Stack<char>[] GetInitialStacks(int separationLine, string[] allLines)
