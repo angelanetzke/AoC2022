@@ -73,7 +73,7 @@ namespace Day07
 			spaceNeeded -= (totalSystemSize - root.GetTotalSize());
 			var directorySet = new HashSet<Directory>();
 			root.GetAllDirectories(directorySet);
-			var sizeList = directorySet.Select(x => x.GetTotalSize()).Where(x => x > spaceNeeded).ToList();
+			var sizeList = directorySet.Select(x => x.GetTotalSize()).Where(x => x >= spaceNeeded).ToList();
 			sizeList.Sort();
 			return sizeList[0];
 		}
