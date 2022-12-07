@@ -2,6 +2,7 @@ namespace Day07
 {
 	internal class FileSystem
 	{
+		private readonly static long totalSystemSize = 70000000L;
 		private Directory root = new ("/", null);
 		private Directory? current;
 
@@ -65,6 +66,16 @@ namespace Day07
 			var directorySet = new HashSet<Directory>();
 			root.GetDirectoriesUnderSize(maxSize, directorySet);
 			return directorySet.Sum(x => x.GetTotalSize());
+		}
+
+		public long FreeUpSpace(long spaceNeeded)
+		{
+			spaceNeeded -= (totalSystemSize - root.GetTotalSize());
+			var directorySet = new HashSet<Directory>();
+			root.GetAllDirectories(directorySet);
+			var sizeList = directorySet.Select(x => x.GetTotalSize()).Where(x => x > spaceNeeded).ToList();
+			sizeList.Sort();
+			return sizeList[0];
 		}
 		private class Directory
 		{
@@ -136,6 +147,15 @@ namespace Day07
 				foreach (Directory thisSubdirectory in subdirectories)
 				{
 					thisSubdirectory.GetDirectoriesUnderSize(maxSize,result);
+				}
+			}
+
+			public void GetAllDirectories(HashSet<Directory> result)
+			{
+				result.Add(this);
+				foreach (Directory thisSubdirectory in subdirectories)
+				{
+					thisSubdirectory.GetAllDirectories(result);
 				}
 			}
 

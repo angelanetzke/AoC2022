@@ -1,11 +1,18 @@
 ﻿using Day07;
 
 var allLines = File.ReadAllLines("input.txt");
-Part1(allLines);
+var theFileSystem = new FileSystem(allLines);
+Part1(theFileSystem);
+Part2(theFileSystem);
 
-static void Part1(string[] allLines)
+static void Part1(FileSystem theFileSystem)
 {
-	var theFileSystem = new FileSystem(allLines);
 	var part1Answer = theFileSystem.GetTotalSizeUnderSize(100000L);
 	Console.WriteLine($"Part 1: {part1Answer}");
+}
+
+static void Part2(FileSystem theFileSystem)
+{
+	var part1Answer = theFileSystem.FreeUpSpace(30000000L);
+	Console.WriteLine($"Part 2: {part1Answer}");
 }
