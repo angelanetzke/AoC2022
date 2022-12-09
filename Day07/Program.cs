@@ -13,6 +13,6 @@ static void Part1(FileSystem theFileSystem)
 
 static void Part2(FileSystem theFileSystem)
 {
-	var part1Answer = theFileSystem.FreeUpSpace(30000000L);
-	Console.WriteLine($"Part 2: {part1Answer}");
+	var part2Answer = theFileSystem.FreeUpSpace(30000000L);
+	Console.WriteLine($"Part 2: {part2Answer}");
 }
