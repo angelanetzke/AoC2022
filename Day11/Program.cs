@@ -7,18 +7,8 @@ Part2(allLines);
 static void Part1(string[] allLines)
 {
 	var group = GetGroup(allLines);
-	const int TURN_COUNT = 20;
-	for (int turn = 1; turn <= TURN_COUNT; turn++)
-	{
-		foreach (Monkey thisMonkey in group)
-		{
-			thisMonkey.TakeTurn();
-		}
-	}
-	List<long> inspectionCounts = group.Select(x => x.GetInspectionCount()).ToList();
-	inspectionCounts.Sort();
-	inspectionCounts.Reverse();
-	var monkeyBusiness = inspectionCounts[0] * inspectionCounts[1];
+	RunSimulation(20, group);	
+	var monkeyBusiness = GetMonkeyBusiness(group);
 	Console.WriteLine($"Part 1: {monkeyBusiness}");
 }
 
@@ -34,18 +24,8 @@ static void Part2(string[] allLines)
 	{
 		thisMonkey.SetReductionFactor(reductionFactor);
 	}
-	const int TURN_COUNT = 10000;
-	for (int turn = 1; turn <= TURN_COUNT; turn++)
-	{
-		foreach (Monkey thisMonkey in group)
-		{
-			thisMonkey.TakeTurn();
-		}
-	}
-	List<long> inspectionCounts = group.Select(x => x.GetInspectionCount()).ToList();
-	inspectionCounts.Sort();
-	inspectionCounts.Reverse();
-	var monkeyBusiness = inspectionCounts[0] * inspectionCounts[1];
+	RunSimulation(10000, group);	
+	var monkeyBusiness = GetMonkeyBusiness(group);
 	Console.WriteLine($"Part 2: {monkeyBusiness}");
 }
 
@@ -72,4 +52,24 @@ static List<Monkey> GetGroup(string[] allLines)
 		group.Add(newMonkey);
 	}
 	return group;
+}
+
+static long GetMonkeyBusiness(List<Monkey> group)
+{
+	List<long> inspectionCounts = group.Select(x => x.GetInspectionCount()).ToList();
+	inspectionCounts.Sort();
+	inspectionCounts.Reverse();
+	var monkeyBusiness = inspectionCounts[0] * inspectionCounts[1];
+	return monkeyBusiness;
+}
+
+static void RunSimulation(int turnCount, List<Monkey> group)
+{
+	for (int turn = 1; turn <= turnCount; turn++)
+	{
+		foreach (Monkey thisMonkey in group)
+		{
+			thisMonkey.TakeTurn();
+		}
+	}
 }
