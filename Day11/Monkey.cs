@@ -35,38 +35,10 @@ namespace Day11
 			{
 				inspectionCount++;
 				long worryLevel = items.Dequeue();
-				if (operand1 == "old")
-				{
-					op1 = worryLevel;
-				}
-				else
-				{
-					op1 = long.Parse(operand1);
-				}
-				if (operand2 == "old")
-				{
-					op2 = worryLevel;
-				}
-				else
-				{
-					op2 = long.Parse(operand2);
-				}
-				if (operation == "*")
-				{
-					worryLevel = op1 * op2;
-				}
-				else
-				{
-					worryLevel = op1 + op2;
-				}
-				if (reductionFactor > 0)
-				{
-					worryLevel %= reductionFactor;
-				}
-				else
-				{
-					worryLevel /= 3;
-				}
+				op1 = operand1 == "old"? worryLevel : long.Parse(operand1);
+				op2 = operand2 == "old"? worryLevel : long.Parse(operand2);
+				worryLevel = operation == "*" ? op1 * op2 : op1 + op2;
+				worryLevel = reductionFactor > 0 ? worryLevel % reductionFactor : worryLevel / 3;
 				if (worryLevel % divisor == 0)
 				{
 					group[trueRecipient].AddItem(worryLevel);
