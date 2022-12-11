@@ -10,7 +10,8 @@ namespace Day11
 		private readonly int trueRecipient;
 		private readonly int falseRecipient;
 		private readonly List<Monkey> group;
-		private int inspectionCount = 0;
+		private long inspectionCount = 0;
+		private long reductionFactor = 0;
 
 		public Monkey(List<Monkey> group, List<string> data)
 		{
@@ -58,7 +59,14 @@ namespace Day11
 				{
 					worryLevel = op1 + op2;
 				}
-				worryLevel /= 3;
+				if (reductionFactor > 0)
+				{
+					worryLevel %= reductionFactor;
+				}
+				else
+				{
+					worryLevel /= 3;
+				}
 				if (worryLevel % divisor == 0)
 				{
 					group[trueRecipient].AddItem(worryLevel);
@@ -78,6 +86,16 @@ namespace Day11
 		public long GetInspectionCount()
 		{
 			return inspectionCount;
+		}
+
+		public int GetDivisor()
+		{
+			return divisor;
+		}
+
+		public void SetReductionFactor(long newFactor)
+		{
+			reductionFactor = newFactor;
 		}
 
 	}
