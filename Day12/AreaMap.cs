@@ -2,11 +2,14 @@ namespace Day12
 {
 	internal class AreaMap
 	{
-		private Node start;
-		private readonly Node end;
+		private readonly Dictionary<(int, int), int> distances = new();
 		private readonly List<Node> initialUnvisited = new ();
+		private Node? start = null;
+		
 		public AreaMap(string[] data)
 		{
+			
+			var end  = new Node(-1, -1, 'X');
 			for (int row = 0; row < data.Length; row++)
 			{
 				for (int column = 0; column < data[row].Length; column++)
@@ -23,29 +26,44 @@ namespace Day12
 					initialUnvisited.Add(newNode);
 				}
 			}
-		}
-
-		public int GetDistanceToEnd()
-		{
-			initialUnvisited.ForEach(x => x.SetDistance(int.MaxValue));
 			var unvisited = new HashSet<Node>(initialUnvisited);
 			var nodeQueue = new Queue<Node>();
-			start.SetDistance(0);
-			nodeQueue.Enqueue(start);
+			end.SetDistance(0);
+			nodeQueue.Enqueue(end);
 			Node current;
 			do
 			{
 				current = nodeQueue.Dequeue();
 				unvisited.Remove(current);
+				distances[current.GetLocation()] = current.GetDistance();
 				var neighbors = unvisited.Where(x => current.CanMoveTo(x)).ToList();
 				neighbors.ForEach(x => x.SetDistance(Math.Min(x.GetDistance(), current.GetDistance() + 1)));
-				if (neighbors.Contains(end))
-				{
-					return end.GetDistance();
-				}
 				neighbors.Where(x => !nodeQueue.Contains(x)).ToList().ForEach(x => nodeQueue.Enqueue(x));
 			} while (nodeQueue.Count > 0);
-			return -1;
+		}
+
+		public int GetDistanceToEnd()
+		{
+			if (start == null)
+			{
+				return -1;
+			}
+			else
+			{
+				return GetDistanceToEnd(start);
+			}
+		}
+
+		private int GetDistanceToEnd(Node startPoint)
+		{
+			if (!distances.Keys.Contains(startPoint.GetLocation()))
+			{
+				return -1;
+			}
+			else
+			{
+				return distances[startPoint.GetLocation()];
+			}
 		}
 
 		public int GetHikingPathDistance()
@@ -55,7 +73,7 @@ namespace Day12
 			foreach(Node thisStartPoint in startPoints)
 			{
 				start = thisStartPoint;
-				var thisDistance = GetDistanceToEnd();
+				var thisDistance = GetDistanceToEnd(thisStartPoint);
 				if (thisDistance > -1)
 				{
 					shortest = Math.Min(shortest, thisDistance);
@@ -63,7 +81,6 @@ namespace Day12
 			}
 			return shortest;
 		}
-
 		private class Node
 		{
 			private readonly int height;
@@ -102,17 +119,22 @@ namespace Day12
 				return height;
 			}
 
+			public (int, int) GetLocation()
+			{
+				return location;
+			}
+
 			public bool CanMoveTo(Node other)
 			{
 				if (location.Item1 == other.location.Item1 
 					&& Math.Abs(location.Item2 - other.location.Item2) == 1
-					&& other.height - height <= 1)
+					&& other.height - height >= -1)
 				{
 					return true;
 				}
 				if (location.Item2 == other.location.Item2 
 					&& Math.Abs(location.Item1 - other.location.Item1) == 1
-					&& other.height - height <= 1)
+					&& other.height - height >= -1)
 				{
 					return true;
 				}
