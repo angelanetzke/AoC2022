@@ -2,9 +2,9 @@ namespace Day12
 {
 	internal class AreaMap
 	{
-		private readonly Node start;
+		private Node start;
 		private readonly Node end;
-		private readonly HashSet<Node> unvisited = new ();
+		private readonly List<Node> initialUnvisited = new ();
 		public AreaMap(string[] data)
 		{
 			for (int row = 0; row < data.Length; row++)
@@ -20,13 +20,15 @@ namespace Day12
 					{
 						end = newNode;
 					}
-					unvisited.Add(newNode);
+					initialUnvisited.Add(newNode);
 				}
 			}
 		}
 
 		public int GetDistanceToEnd()
 		{
+			initialUnvisited.ForEach(x => x.SetDistance(int.MaxValue));
+			var unvisited = new HashSet<Node>(initialUnvisited);
 			var nodeQueue = new Queue<Node>();
 			start.SetDistance(0);
 			nodeQueue.Enqueue(start);
@@ -44,6 +46,22 @@ namespace Day12
 				neighbors.Where(x => !nodeQueue.Contains(x)).ToList().ForEach(x => nodeQueue.Enqueue(x));
 			} while (nodeQueue.Count > 0);
 			return -1;
+		}
+
+		public int GetHikingPathDistance()
+		{
+			var shortest = int.MaxValue;
+			var startPoints = initialUnvisited.Where(x => x.GetHeight() == 0).ToList();
+			foreach(Node thisStartPoint in startPoints)
+			{
+				start = thisStartPoint;
+				var thisDistance = GetDistanceToEnd();
+				if (thisDistance > -1)
+				{
+					shortest = Math.Min(shortest, thisDistance);
+				}
+			}
+			return shortest;
 		}
 
 		private class Node
@@ -77,6 +95,11 @@ namespace Day12
 			public void SetDistance(int newDistance)
 			{
 				distance = newDistance;
+			}
+
+			public int GetHeight()
+			{
+				return height;
 			}
 
 			public bool CanMoveTo(Node other)
