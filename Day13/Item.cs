@@ -124,5 +124,38 @@ namespace Day13
 			}
 		}
 
+		public override int GetHashCode()
+		{
+			if (!isList)
+			{
+				return value.GetHashCode();
+			}
+			else
+			{
+				if (list.Count == 0)
+				{
+					return 17;
+				}
+				else
+				{
+					int hashCode = 17;
+					list.ForEach(x => hashCode = (hashCode + x.GetHashCode()).GetHashCode());
+					return hashCode;
+				}
+			}
+		}
+
+		public override bool Equals(object? obj)
+		{
+			if (obj is Item other)
+			{
+				return CompareTo(other) == 0;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
 	}
 }
