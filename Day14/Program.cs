@@ -1,5 +1,6 @@
 ﻿var allLines = File.ReadAllLines("input.txt");
 Part1(allLines);
+Part2(allLines);
 
 static void Part1(string[] allLines)
 {
@@ -43,6 +44,50 @@ static void Part1(string[] allLines)
 		successCount = wasSuccessful ? successCount + 1 : successCount;
 	}
 	Console.WriteLine($"Part 1: {successCount}");
+}
+
+static void Part2(string[] allLines)
+{
+	var occupied = GetInitialOccupied(allLines);
+	var maxY = occupied.Select(x => x.Item2).Max() + 2;
+	int sandStartX = 500;
+	int sandStartY = 0;
+	int successCount = 0;
+	bool isFull = false;
+	while (!isFull)
+	{
+		var sandX = sandStartX;
+		var sandY = sandStartY;
+		bool canMove = true;
+		while (canMove)
+		{
+			if (!occupied.Contains((sandX, sandY + 1)))
+			{
+				sandY++;
+			}
+			else if (!occupied.Contains((sandX - 1, sandY + 1)))
+			{
+				sandX--;
+				sandY++;
+			}
+			else if (!occupied.Contains((sandX + 1, sandY + 1)))
+			{
+				sandX++;
+				sandY++;
+			}
+			canMove = sandY + 1 < maxY &&
+				(!occupied.Contains((sandX, sandY + 1))
+				|| !occupied.Contains((sandX - 1, sandY + 1))
+				|| !occupied.Contains((sandX + 1, sandY + 1)));
+			if (!canMove)
+			{
+				occupied.Add((sandX, sandY));
+				successCount++;
+				isFull = sandX == sandStartX && sandY == sandStartY;
+			}
+		}
+	}
+	Console.WriteLine($"Part 2: {successCount}");
 }
 
 static HashSet<(int, int)> GetInitialOccupied(string[] allLines)
