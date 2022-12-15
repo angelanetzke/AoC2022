@@ -91,69 +91,33 @@ static void Part2(string[] allLines)
 		var beaconX = int.Parse(regex.Match(thisLine).Groups["beaconX"].Value);
 		var beaconY = int.Parse(regex.Match(thisLine).Groups["beaconY"].Value);
 		knownObjects.Add(new SensorAndBeacon(sensorX, sensorY, beaconX, beaconY));
-	}	
-	var foundBeaconX = 0;
-	var foundBeaconY = 0;
-	var isBeaconFound = false;
-	for (int targetY = minY; targetY <= maxY; targetY++)
+	}
+	var allIntersections = new HashSet<(int, int)>();
+	for (int i = 0; i < knownObjects.Count - 1; i++)
 	{
-		List<EmptyRange> targetYRanges = new ();
-		foreach (SensorAndBeacon thisObject in knownObjects)
+		for (int ii = i + 1; ii < knownObjects.Count; ii++)
 		{
-			var thisRange = thisObject.GetEmptyRangeAtY(targetY);
-			if (thisRange != null)
+			var thisPairIntersections = knownObjects[i].GetItersections(knownObjects[ii]);
+			foreach ((int, int) thisIntersection in thisPairIntersections)
 			{
-				targetYRanges.Add(thisRange);
-			}
-		}
-		HashSet<EmptyRange> temp = new ();
-		var madeAnyMerges = true;
-		var hasBeenMerged = new Dictionary<EmptyRange, bool>();
-		while (madeAnyMerges && targetYRanges.Count > 1)
-		{
-			hasBeenMerged.Clear();
-			targetYRanges.ForEach(x => hasBeenMerged[x] = false);
-			temp.Clear();
-			madeAnyMerges = false;
-			for (int i = 0; i < targetYRanges.Count - 1; i++)
-			{
-				for (int ii = i + 1; ii < targetYRanges.Count; ii++)
+				if (minX <= thisIntersection.Item1 && thisIntersection.Item1 <= maxX
+					&& minY <= thisIntersection.Item2 && thisIntersection.Item2 <= maxY)
 				{
-					var thisMerge = targetYRanges[i].Merge(targetYRanges[ii]);
-					if (thisMerge.Count == 1)
-					{
-						madeAnyMerges = true;
-						if (!thisMerge[0].Equals(targetYRanges[i]))
-						{
-							hasBeenMerged[targetYRanges[i]] = true;
-						}
-						if (!thisMerge[0].Equals(targetYRanges[ii]))
-						{
-							hasBeenMerged[targetYRanges[ii]] = true;
-						}
-					}
-					thisMerge.ForEach(x => temp.Add(x));
+					allIntersections.Add(thisIntersection);
 				}
 			}
-			hasBeenMerged.Where(x => x.Value).ToList().ForEach(x => temp.Remove(x.Key));
-			targetYRanges.Clear();
-			targetYRanges.AddRange(temp);
 		}
-		foreach (EmptyRange thisRange in targetYRanges)
+	}
+	var beaconLocation = (-1, -1);
+	foreach ((int, int) thisIntersection in allIntersections)
+	{
+		var inRangeCount = knownObjects.Where(x => x.IsInRange(thisIntersection)).Count();
+		if (inRangeCount == 0)
 		{
-			var test = thisRange.GetSpaceNotInRange(minX, maxX) ;
-			if (test != null)
-			{
-				foundBeaconX = (int)test;
-				foundBeaconY = targetY;
-				isBeaconFound = true;
-			}
-		}
-		if (isBeaconFound)
-		{
+			beaconLocation = thisIntersection;
 			break;
 		}
 	}	
-	var frequency = 4000000L * foundBeaconX + foundBeaconY;
+	var frequency = 4000000L * beaconLocation.Item1 + beaconLocation.Item2;
 	Console.WriteLine($"Part 2: {frequency}");
 }
