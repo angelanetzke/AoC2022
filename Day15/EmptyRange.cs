@@ -30,6 +30,25 @@ namespace Day15
 			return result;
 		}
 
+		public int? GetSpaceNotInRange(int searchMin, int searchMax)
+		{
+			if (GetLength() >= searchMax - searchMin + 1)
+			{
+				return null;
+			}
+			else
+			{
+				if (searchMin < min)
+				{
+					return min - 1;
+				}
+				else
+				{
+					return max + 1;
+				}
+			}
+		}
+
 		public override bool Equals(object? obj)
 		{
 			if (obj is EmptyRange other)
