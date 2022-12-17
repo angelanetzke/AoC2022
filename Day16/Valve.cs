@@ -76,6 +76,11 @@ namespace Day16
 			isOpen = true;
 		}
 
+		public void CloseValve()
+		{
+			isOpen = false;
+		}
+
 		public bool IsOpen()
 		{
 			return isOpen;

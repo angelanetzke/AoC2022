@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace Day16
 {
 	internal class State
@@ -7,16 +9,27 @@ namespace Day16
 		private int timeLeft;
 		private string nextMoveName;
 		private static readonly string start = "AA";
+		private bool isSecondTurnNeeded;
+		private static int totalTime;
+		private static Dictionary<(int, string, string, string, bool), int> cache = new ();
+		private static Dictionary<string, int> secondTurnCache = new ();
 		
-		public State(int timeLeft, string nextMoveName, Dictionary<string, Valve> oldValveCollection)
+		public State(int timeLeft, string nextMoveName, 
+			Dictionary<string, Valve> oldValveCollection, bool isSecondTurnNeeded)
 		{
 			this.timeLeft = timeLeft;
 			this.nextMoveName = nextMoveName;
+			this.isSecondTurnNeeded = isSecondTurnNeeded;
 			valveCollection = new ();
 			foreach (string thisKey in oldValveCollection.Keys)
 			{
 				valveCollection[thisKey] = new Valve(oldValveCollection[thisKey]);
 			}
+		}
+
+		public static void SetTotalTime(int newTime)
+		{
+			totalTime = newTime;
 		}
 
 		public int GetPressureReleased()
@@ -42,11 +55,35 @@ namespace Day16
 			else
 			{
 				int maxPressureReleased = 0;
+				int nextStatePressure;
+				var currentOpenValves = GetOpenValveString();
 				foreach (Valve thisValve in scoredList)
-				{
-					var nextState = new State(timeLeft, thisValve.GetName(), valveCollection);
-					int nextStatePressure = nextState.GetPressureReleased();
-					maxPressureReleased = Math.Max(maxPressureReleased, pressureReleased + nextStatePressure);	
+				{					
+					if (cache.ContainsKey((timeLeft, nextMoveName, thisValve.GetName(), currentOpenValves, isSecondTurnNeeded)))
+					{
+						nextStatePressure = cache[(timeLeft, nextMoveName, thisValve.GetName(), currentOpenValves, isSecondTurnNeeded)];
+					}
+					else
+					{
+						var nextState = new State(timeLeft, thisValve.GetName(), valveCollection, isSecondTurnNeeded);
+						nextStatePressure = nextState.GetPressureReleased();
+						cache[(timeLeft, nextMoveName, thisValve.GetName(), currentOpenValves, isSecondTurnNeeded)] = nextStatePressure;
+					}
+					maxPressureReleased = Math.Max(maxPressureReleased, pressureReleased + nextStatePressure);					
+				}
+				if (isSecondTurnNeeded)
+				{										
+					if (secondTurnCache.ContainsKey(currentOpenValves))
+					{
+						nextStatePressure = secondTurnCache[currentOpenValves];
+					}
+					else
+					{
+						var nextState = new State(totalTime, start, valveCollection, false);
+						nextStatePressure = nextState.GetPressureReleased();
+						secondTurnCache[currentOpenValves] = nextStatePressure;
+					}					
+					maxPressureReleased = Math.Max(maxPressureReleased, pressureReleased + nextStatePressure);
 				}
 				return maxPressureReleased;
 			}
@@ -87,6 +124,16 @@ namespace Day16
 			}
 			return scoredValves;
 		}
+
+		private string GetOpenValveString()
+		{
+			var builder = new StringBuilder();
+			var openValveList = valveCollection.Values.Where(x => x.IsOpen()).Select(x => x.GetName()).ToList();
+			openValveList.Sort();
+			openValveList.ForEach(x => builder.Append(x));
+			return builder.ToString();
+		}
+
 		public static void SetConnections(Dictionary<string, string[]> newConnections)
 		{
 			connections = newConnections;
