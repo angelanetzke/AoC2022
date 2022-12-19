@@ -52,10 +52,31 @@ namespace Day17
 			}
 		}
 
-		public void NextRock()
+		public (int, int, int, int, int, int, int, int, int) NextRock()
 		{
 			rockType = (rockType + 1) % rockTypeCount;
 			location = (2, GetTowerHeight() + 4);
+			var minColumnHeight = settledRocks.Select(x => x.Count == 0 ? 0 : x.Max()).Min();
+			var relativeColumnHeights = new List<int>();
+			foreach (HashSet<int> thisColumn in settledRocks)
+			{
+				if (thisColumn.Count == 0)
+				{
+					relativeColumnHeights.Add(0);
+				}
+				else
+				{
+					relativeColumnHeights.Add(thisColumn.Max() - minColumnHeight);
+				}
+			}
+			return (rockType, windIndex,
+				relativeColumnHeights[0],
+				relativeColumnHeights[1],
+				relativeColumnHeights[2],
+				relativeColumnHeights[3],
+				relativeColumnHeights[4],
+				relativeColumnHeights[5],
+				relativeColumnHeights[6]);
 		}
 
 		public bool CanFall()
