@@ -41,16 +41,16 @@ namespace Day20
 
 		public void Mix()
 		{
-			long repititions;
+			long repetitions;
 			if (Math.Abs(value) < nodeCount)
 			{
-				repititions = Math.Abs(value);
+				repetitions = Math.Abs(value);
 			}
 			else
 			{
-				repititions = Math.Abs(value) % (nodeCount - 1);
+				repetitions = Math.Abs(value) % (nodeCount - 1);
 			}
-			for (long i = 0; i < repititions; i++)
+			for (long i = 0; i < repetitions; i++)
 			{
 				if (value > 0L)
 				{
