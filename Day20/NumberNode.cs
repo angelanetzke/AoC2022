@@ -2,16 +2,17 @@ namespace Day20
 {
 	internal class NumberNode
 	{
-		private readonly int value;
+		public static int nodeCount = 0;
+		private readonly long value;
 		private NumberNode? previous = null;
 		private NumberNode? next = null;
 
-		public NumberNode(int value)
+		public NumberNode(long value)
 		{
 			this.value = value;
 		}
 
-		public int GetValue()
+		public long GetValue()
 		{
 			return value;
 		}
@@ -26,7 +27,7 @@ namespace Day20
 			next = newNext;
 		}
 
-		public int GetNthNext(int n)
+		public long GetNthNext(int n)
 		{
 			if (n == 0)
 			{
@@ -40,13 +41,22 @@ namespace Day20
 
 		public void Mix()
 		{
-			for (int i = 0; i < Math.Abs(value); i++)
+			long repititions;
+			if (Math.Abs(value) < nodeCount)
 			{
-				if (value > 0)
+				repititions = Math.Abs(value);
+			}
+			else
+			{
+				repititions = Math.Abs(value) % (nodeCount - 1);
+			}
+			for (long i = 0; i < repititions; i++)
+			{
+				if (value > 0L)
 				{
 					MoveForward();
 				}
-				else if (value < 0)
+				else if (value < 0L)
 				{
 					MoveBackward();
 				}
@@ -80,7 +90,6 @@ namespace Day20
 			A.SetNext(Z);
 			B.SetPrevious(Z);
 		}
-
 
 	}
 }
