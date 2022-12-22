@@ -1,7 +1,9 @@
-﻿using System.Text.RegularExpressions;
+﻿using Day21;
+using System.Text.RegularExpressions;
 
 var allLines = File.ReadAllLines("input.txt");
 Part1(allLines);
+Part2(allLines);
 
 static void Part1(string[] allLines)
 {
@@ -60,5 +62,10 @@ static void Part1(string[] allLines)
 		}
 	}
 	Console.WriteLine($"Part 1: {entries["root"]}");
+}
 
+static void Part2(string[] allLines)
+{
+	var theEquation = new Equation(allLines);
+	Console.WriteLine($"Part 2: {theEquation.Solve()}");
 }
